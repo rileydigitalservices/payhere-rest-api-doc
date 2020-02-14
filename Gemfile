@@ -1,42 +1,12 @@
-ruby '2.5.7'
+ruby '>=2.3.1'
 source 'https://rubygems.org'
 
 # Middleman
-gem 'middleman', '4.3.2'
-gem 'middleman-aria_current'
-gem 'middleman-autoprefixer'
-gem 'middleman-data_source'
-gem 'middleman-syntax'
-gem 'middleman-gh-pages'
-gem 'middleman-sprockets'
-gem 'middleman-livereload'
-
+gem 'middleman', '~>4.2.1'
+gem 'middleman-syntax', '~> 3.0.0'
+gem 'middleman-autoprefixer', '~> 2.7.0'
+gem 'middleman-sprockets', '~> 4.1.0'
+gem 'rouge', '~> 2.0.5'
 gem 'redcarpet', '~> 3.4.0'
-gem 'nokogiri', '~> 1.10.4'
-
-# Templating engines
-gem 'kramdown'
-gem 'rubypants'
-
-# CSS
-gem 'sassc'
-
-# Syntax highlighting
-gem 'rouge'
-
-# Slugs
-gem 'sterile'
-
-# For resource pluralization, etc
-# activesupport/lib/active_support/inflector/inflections.rb
-gem 'activesupport'
-
-# Windows Support
-if Gem.win_platform?
-  gem 'wdm'
-  gem 'tzinfo-data', platforms: [:mswin, :mingw, :jruby]
-end
-
-group :development do
-  gem 'html-proofer'
-end
+gem 'nokogiri', '>= 1.10.4'
+# gem 'middleman-compass', '~> 4.0', '>= 4.0.1'

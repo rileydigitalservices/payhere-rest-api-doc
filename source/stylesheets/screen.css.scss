@@ -73,9 +73,15 @@ html, body {
 
   // This is the logo at the top of the ToC
   .logo {
+    padding: 10px 20px;
+    margin: 0;
     display: block;
-    max-width: 100%;
-    margin-bottom: $logo-margin;
+    border-bottom: 1px solid #ddd;
+
+    img {
+      display: block;
+      width: 100%;
+    }
   }
 
   &>.search {
@@ -146,9 +152,9 @@ html, body {
 
   li {
     color: $nav-text;
+    transition-duration: 200ms;
     transition-property: background;
     transition-timing-function: linear;
-    transition-duration: 200ms;
   }
 
   // This is the currently selected ToC entry
@@ -166,7 +172,7 @@ html, body {
   .toc-list-h2 {
     display: none;
     background-color: $nav-subitem-bg;
-    font-weight: 500;
+    font-weight: normal;
   }
 
   .toc-h2 {
@@ -613,3 +619,18 @@ html, body {
 .highlight, .highlight .w {
   background-color: $code-bg;
 }
+
+body.has-warning {
+  margin-top: 33px;
+
+  .toc-wrapper {
+    top: 33px;
+  }
+}
+
+@import 'toc';
+@import 'warning';
+@import 'label';
+@import 'api-endpoint';
+@import 'content';
+@import 'lang-selector';

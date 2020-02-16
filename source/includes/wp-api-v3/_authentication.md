@@ -24,6 +24,7 @@ const PayhereRestApi = require("@payhere/payhere-rest-api").default;
 
 const payhere = new PayhereRestApi({
   url: 'https://api.payhere.africa',
+  app_id: 'your_app_id',
   username: 'your_username',
   password: 'your_password',
   version: 'v1'
@@ -38,6 +39,7 @@ use RileyDigitalServices\payhere\Client;
 
 $payhere = new Client(
     'https://api.payhere.africa',
+    'your_app_id',
     'your_username',
     'your_password',
     [
@@ -52,6 +54,7 @@ from payhere import API
 
 wcapi = API(
     url="https://api.payhere.africa",
+    app_id='your_app_id',
     username="your_username",
     password="your_password",
     version="v1"
@@ -63,6 +66,7 @@ require "payhere_api"
 
 payhere = payhere::API.new(
   "https://api.payhere.africa",
+  "your_app_id",
   "username",
   "password",
   {
@@ -99,6 +103,7 @@ const PayhereRestApi = require("@payhere/payhere-rest-api").default;
 
 const payhere = new PayhereRestApi({
   url: 'https://api.payhere.africa',
+  app_id: 'your_app_id',
   username: 'your_username',
   password: 'your_password',
   version: 'v1',
@@ -114,6 +119,7 @@ use RileyDigitalServices\payhere\Client;
 
 $payhere = new Client(
     'https://api.payhere.africa',
+    'your_app_id',
     'your_username',
     'your_password',
     [
@@ -129,6 +135,7 @@ from payhere import API
 
 wcapi = API(
     url="https://api.payhere.africa",
+    app_id='your_app_id',
     username="your_username",
     password="your_password",
     version="v1",
@@ -141,6 +148,7 @@ require "payhere_api"
 
 payhere = payhere::API.new(
   "https://api.payhere.africa",
+  "your_app_id",
   "your_username",
   "your_password",
   {

@@ -44,14 +44,15 @@ Occasionally you might encounter errors when accessing the REST API. There are f
 ```json
 {
   "code": "payhere_rest_term_invalid",
+  "status": "indicate if request was successfull",
   "message": "Resource doesn't exist.",
-  "data": {
+  "data_obj": {
     "status": 404
   }
 }
 ```
 
-Errors return both an appropriate HTTP status code and response object which contains a `code`, `message` and `data` attribute.
+Errors return both an appropriate HTTP status code and response object which contains a `code`, `message`, `status` and `data_obj` attribute.
 
 ## Parameters ##
 

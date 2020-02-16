@@ -1,85 +1,60 @@
 # In Payments #
 
-The inppayments API allows you to create, and view money that is being received.
+The inpayments API allows you to create, and view money that is being sent.
 
 ## Inpayment properties ##
 
 | Attribute                     | Type      | Description                                                                                                                          |
 | ----------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `id`                          | integer   | Unique identifier for the object. <i class="label label-info">read-only</i>                                                          |
-| `code`                        | string    | Coupon code. <i class="label label-info">mandatory</i>                                                                               |
-| `amount`                      | string    | The amount of discount. Should always be numeric, even if setting a percentage.                                                      |
-| `date_created`                | date-time | The date the coupon was created, in the site's timezone. <i class="label label-info">read-only</i>                                   |
-| `date_created_gmt`            | date-time | The date the coupon was created, as GMT. <i class="label label-info">read-only</i>                                                   |
-| `date_modified`               | date-time | The date the coupon was last modified, in the site's timezone. <i class="label label-info">read-only</i>                             |
-| `date_modified_gmt`           | date-time | The date the coupon was last modified, as GMT. <i class="label label-info">read-only</i>                                             |
-| `discount_type`               | string    | Determines the type of discount that will be applied. Options: `percent`, `fixed_cart` and `fixed_product`. Default is `fixed_cart`. |
-| `description`                 | string    | Coupon description.                                                                                                                  |
-| `date_expires`                | string    | The date the coupon expires, in the site's timezone.                                                                                 |
-| `date_expires_gmt`            | string    | The date the coupon expires, as GMT.                                                                                                 |
-| `usage_count`                 | integer   | Number of times the coupon has been used already. <i class="label label-info">read-only</i>                                          |
-| `individual_use`              | boolean   | If true, the coupon can only be used individually. Other applied coupons will be removed from the cart. Default is `false`.          |
-| `product_ids`                 | array     | List of product IDs the coupon can be used on.                                                                                       |
-| `excluded_product_ids`        | array     | List of product IDs the coupon cannot be used on.                                                                                    |
-| `usage_limit`                 | integer   | How many times the coupon can be used in total.                                                                                      |
-| `usage_limit_per_user`        | integer   | How many times the coupon can be used per customer.                                                                                  |
-| `limit_usage_to_x_items`      | integer   | Max number of items in the cart the coupon can be applied to.                                                                        |
-| `free_shipping`               | boolean   | If true and if the free shipping method requires a coupon, this coupon will enable free shipping. Default is `false`.                |
-| `product_categories`          | array     | List of category IDs the coupon applies to.                                                                                          |
-| `excluded_product_categories` | array     | List of category IDs the coupon does not apply to.                                                                                   |
-| `exclude_sale_items`          | boolean   | If true, this coupon will not be applied to items that have sale prices. Default is `false`.                                         |
-| `minimum_amount`              | string    | Minimum order amount that needs to be in the cart before coupon applies.                                                             |
-| `maximum_amount`              | string    | Maximum order amount allowed when using the coupon.                                                                                  |
-| `email_restrictions`          | array     | List of email addresses that can use this coupon.                                                                                    |
-| `used_by`                     | array     | List of user IDs (or guest email addresses) that have used the coupon. <i class="label label-info">read-only</i>                     |
-| `meta_data`                   | array     | Meta data. See [Coupon - Meta data properties](#coupon-meta-data-properties)                                                         |
+| `processingNumber`                          | string   | Unique identifier for the payment object. <i class="label label-info">mandatory</i>                                                          |
+| `sender`                        | string    | Ther person making the payment. <i class="label label-info">mandatory</i>                                                                               |
+| `amountcharged`                      | string    | The amount of money sent. Should always be numeric, even if setting a percentage.                                                      |
+| `date_added`                | date-time | The date the money was sent, in the site's timezone. <i class="label label-info">read-only</i>                                   |
+| `transactionStatus`               | string    | Determines if the payment was successful at the aggregators end <i class="label label-info">read-only</i> 
+                                       |
+| `narration`                 | string    | Description of what is being paid for.                                                                                                                  |
+| `transactionId`                | integer    | The unique transaction id of the money that has been sent <i class="label label-info">read-only</i>                                                                                 |
+| `gatewayResponse`            | string    | The response from the aggregator. <i class="label label-info">read-only</i>                                                                                  |
+| `gateway`                 | integer   | Aggregator whos is facilitating the money movement. <i class="label label-info">read-only</i>                                          |
+| `responseTime`                | date-time | The time it took for the full transaction to be completed. <i class="label label-info">read-only</i>
+                                  |                                |
 
-### Coupon - Meta data properties ###
+## Create ann inpayment ##
 
-| Attribute | Type    | Description                                        |
-| --------- | ------- | -------------------------------------------------- |
-| `id`      | integer | Meta ID. <i class="label label-info">read-only</i> |
-| `key`     | string  | Meta key.                                          |
-| `value`   | string  | Meta value.                                        |
-
-## Create a coupon ##
-
-This API helps you to create a new coupon.
+This API helps you to create a new inpayment.
 
 ### HTTP request ###
 
 <div class="api-endpoint">
 	<div class="endpoint-data">
 		<i class="label label-post">POST</i>
-		<h6>/wp-json/wc/v3/coupons</h6>
+		<h6>/inpayments</h6>
 	</div>
 </div>
 
 ```shell
-curl -X POST https://example.com/wp-json/wc/v3/coupons \
-	-u consumer_key:consumer_secret \
-	-H "Content-Type: application/json" \
+curl -X POST https://api.payhere.africa/v1/inpayments \
+	-u username:your_username \
+  -u password:your_password \
+  -H "APP-ID: your_app_id" \
+  -H "Content-Type: application/json" \
 	-d '{
-  "code": "10off",
-  "discount_type": "percent",
-  "amount": "10",
-  "individual_use": true,
-  "exclude_sale_items": true,
-  "minimum_amount": "100.00"
+  "processingNumber": "12ahhdashh223h2882",
+  "msisdn": 256772123456,
+  "amount": 500000,
+  "narration": "Paying for 4 nights in riley hotel"
 }'
 ```
 
 ```javascript
 const data = {
-  code: "10off",
-  discount_type: "percent",
-  amount: "10",
-  individual_use: true,
-  exclude_sale_items: true,
-  minimum_amount: "100.00"
+  processingNumber: "12ahhdashh223h2882",
+  msisdn: 256772123456,
+  amount: 500000,
+  narration: "Paying for 4 nights in riley hotel"
 };
 
-WooCommerce.post("coupons", data)
+Payhere.post("inpayments", data)
   .then((response) => {
     console.log(response.data);
   })
@@ -91,110 +66,82 @@ WooCommerce.post("coupons", data)
 ```php
 <?php
 $data = [
-    'code' => '10off',
-    'discount_type' => 'percent',
-    'amount' => '10',
-    'individual_use' => true,
-    'exclude_sale_items' => true,
-    'minimum_amount' => '100.00'
+    'processingNumber' => '12ahhdashh223h2882',
+    'msisdn' => 256772123456,
+    'amount' => 500000,
+    'narration' => 'Paying for 4 nights in riley hotel'
 ];
 
-print_r($woocommerce->post('coupons', $data));
+print_r($payhere->post('inpayments', $data));
 ?>
 ```
 
 ```python
 data = {
-    "code": "10off",
-    "discount_type": "percent",
-    "amount": "10",
-    "individual_use": True,
-    "exclude_sale_items": True,
-    "minimum_amount": "100.00"
+    "processingNumber": "12ahhdashh223h2882",
+    "msisdn": 256772123456,
+    "amount": 500000,
+    "narration": "Paying for 4 nights in riley hotel"
 }
 
-print(wcapi.post("coupons", data).json())
+print(wcapi.post("inpayments", data).json())
 ```
 
 ```ruby
 data = {
-  code: "10off",
-  discount_type: "percent",
-  amount: "10",
-  individual_use: true,
-  exclude_sale_items: true,
-  minimum_amount: "100.00"
+  processingNumber: "12ahhdashh223h2882",
+  msisdn: 256772123456,
+  amount: 500000,
+  narration: "Paying for 4 nights in riley hotel"
 }
 
-woocommerce.post("coupons", data).parsed_response
+payhere.post("inpayments", data).parsed_response
 ```
 
 > JSON response example:
 
 ```json
 {
-  "id": 719,
-  "code": "10off",
-  "amount": "10.00",
-  "date_created": "2017-03-21T15:23:00",
-  "date_created_gmt": "2017-03-21T18:23:00",
-  "date_modified": "2017-03-21T15:23:00",
-  "date_modified_gmt": "2017-03-21T18:23:00",
-  "discount_type": "percent",
-  "description": "",
-  "date_expires": null,
-  "date_expires_gmt": null,
-  "usage_count": 0,
-  "individual_use": true,
-  "product_ids": [],
-  "excluded_product_ids": [],
-  "usage_limit": null,
-  "usage_limit_per_user": null,
-  "limit_usage_to_x_items": null,
-  "free_shipping": false,
-  "product_categories": [],
-  "excluded_product_categories": [],
-  "exclude_sale_items": true,
-  "minimum_amount": "100.00",
-  "maximum_amount": "0.00",
-  "email_restrictions": [],
-  "used_by": [],
-  "meta_data": [],
+  "processingNumber": "12ahhdashh223h2882",
+  "transactionStatus": "pending",
   "_links": {
     "self": [
       {
-        "href": "https://example.com/wp-json/wc/v3/coupons/719"
+        "href": "https://api.payhere.africa/v1/inpayments/12ahhdashh223h2882"
       }
     ],
     "collection": [
       {
-        "href": "https://example.com/wp-json/wc/v3/coupons"
+        "href": "https://api.payhere.africa/v1/inpayments"
       }
     ]
   }
 }
 ```
 
-## Retrieve a coupon ##
+## Retrieve an inpayment ##
 
-This API lets you retrieve and view a specific coupon by ID.
+This API lets you retrieve and view a specific inpayment by ID.
 
 ### HTTP request ###
 
 <div class="api-endpoint">
 	<div class="endpoint-data">
 		<i class="label label-get">GET</i>
-		<h6>/wp-json/wc/v3/coupons/&lt;id&gt;</h6>
+		<h6>/inpayments/&lt;id&gt;</h6>
 	</div>
 </div>
 
 ```shell
-curl https://example.com/wp-json/wc/v3/coupons/719 \
-	-u consumer_key:consumer_secret
+curl https://api.payhere.africa/v1/inpayments/12ahhdashh223h2882 \
+	-u username:your_username \
+  -u password:your_password \
+  -H "APP-ID: your_app_id" \
+  -H "Content-Type: application/json"
 ```
 
 ```javascript
-WooCommerce.get("coupons/719")
+Payhere.get("inpayments/12ahhdashh223h2882")
   .then((response) => {
     console.log(response.data);
   })
@@ -204,83 +151,71 @@ WooCommerce.get("coupons/719")
 ```
 
 ```php
-<?php print_r($woocommerce->get('coupons/719')); ?>
+<?php print_r($payhere->get('inpayments/12ahhdashh223h2882')); ?>
 ```
 
 ```python
-print(wcapi.get("coupons/719").json())
+print(wcapi.get("inpayments/719").json())
 ```
 
 ```ruby
-woocommerce.get("coupons/719").parsed_response
+payhere.get("inpayments/12ahhdashh223h2882").parsed_response
 ```
 
 > JSON response example:
 
 ```json
 {
-  "id": 719,
-  "code": "10off",
-  "amount": "10.00",
-  "date_created": "2017-03-21T15:23:00",
-  "date_created_gmt": "2017-03-21T18:23:00",
-  "date_modified": "2017-03-21T15:23:00",
-  "date_modified_gmt": "2017-03-21T18:23:00",
-  "discount_type": "percent",
-  "description": "",
-  "date_expires": null,
-  "date_expires_gmt": null,
-  "usage_count": 0,
-  "individual_use": true,
-  "product_ids": [],
-  "excluded_product_ids": [],
-  "usage_limit": null,
-  "usage_limit_per_user": null,
-  "limit_usage_to_x_items": null,
-  "free_shipping": false,
-  "product_categories": [],
-  "excluded_product_categories": [],
-  "exclude_sale_items": true,
-  "minimum_amount": "100.00",
-  "maximum_amount": "0.00",
-  "email_restrictions": [],
-  "used_by": [],
-  "meta_data": [],
+  "processingNumber": "10househelp1001",
+  "sender": "256703123456",
+  "principalAmount": "500",
+  "serviceCharge": "0",
+  "amountcharged": "500",
+  "narration": "Maid service",
+  "date_added": "2020-02-13 16:08:35",
+  "transactionStatus": "success",
+  "transactionId": "35923596955",
+  "gatewayResponse": "{\"TXNSTATUS\":1,\"RESPONSE\":\"Success\",\"MESSAGE\":\"Success\",\"EXTTRID\":\"10househelp1001\",\"TXNID\":\"35923596955\"}",
+  "gateway": "airtelMoneyUg",
+  "responseTime": "2020-02-13 16:10:16",
   "_links": {
     "self": [
       {
-        "href": "https://example.com/wp-json/wc/v3/coupons/719"
+        "href": "https://api.payhere.africa/v1/inpayments/12ahhdashh223h2882"
       }
     ],
     "collection": [
       {
-        "href": "https://example.com/wp-json/wc/v3/coupons"
+        "href": "https://api.payhere.africa/v1/inpayments"
       }
     ]
   }
 }
 ```
 
-## List all coupons ##
+## List all inpayments ##
 
-This API helps you to list all the coupons that have been created.
+This API helps you to list all the inpayments that have been created.
 
 ### HTTP request ###
 
 <div class="api-endpoint">
 	<div class="endpoint-data">
 		<i class="label label-get">GET</i>
-		<h6>/wp-json/wc/v3/coupons</h6>
+		<h6>/inpayments</h6>
 	</div>
 </div>
 
 ```shell
-curl https://example.com/wp-json/wc/v3/coupons \
-	-u consumer_key:consumer_secret
+curl https://api.payhere.africa/v1/inpayments \
+	-u username:your_username \
+  -u password:your_password \
+  -H "APP-ID: your_app_id" \
+  -H "Content-Type: application/json"
 ```
 
 ```javascript
-WooCommerce.get("coupons")
+Payhere.get("inpayments")
   .then((response) => {
     console.log(response.data);
   })
@@ -290,15 +225,15 @@ WooCommerce.get("coupons")
 ```
 
 ```php
-<?php print_r($woocommerce->get('coupons')); ?>
+<?php print_r($payhere->get('inpayments')); ?>
 ```
 
 ```python
-print(wcapi.get("coupons").json())
+print(wcapi.get("inpayments").json())
 ```
 
 ```ruby
-woocommerce.get("coupons").parsed_response
+payhere.get("inpayments").parsed_response
 ```
 
 > JSON response example:
@@ -306,83 +241,53 @@ woocommerce.get("coupons").parsed_response
 ```json
 [
   {
-    "id": 720,
-    "code": "free shipping",
-    "amount": "0.00",
-    "date_created": "2017-03-21T15:25:02",
-    "date_created_gmt": "2017-03-21T18:25:02",
-    "date_modified": "2017-03-21T15:25:02",
-    "date_modified_gmt": "2017-03-21T18:25:02",
-    "discount_type": "fixed_cart",
-    "description": "",
-    "date_expires": null,
-    "date_expires_gmt": null,
-    "usage_count": 0,
-    "individual_use": true,
-    "product_ids": [],
-    "excluded_product_ids": [],
-    "usage_limit": null,
-    "usage_limit_per_user": null,
-    "limit_usage_to_x_items": null,
-    "free_shipping": true,
-    "product_categories": [],
-    "excluded_product_categories": [],
-    "exclude_sale_items": false,
-    "minimum_amount": "0.00",
-    "maximum_amount": "0.00",
-    "email_restrictions": [],
-    "used_by": [],
-    "meta_data": [],
+    "processingNumber": "househelp1001",
+    "sender": "256703123456",
+    "principalAmount": "500",
+    "serviceCharge": "0",
+    "amountCharged": "500",
+    "narration": "Maid service",
+    "date_added": "2020-02-13 15:40:24",
+    "transactionStatus": "success",
+    "transactionId": "35923596955",
+    "gatewayResponse": "{\"TXNSTATUS\":1,\"RESPONSE\":\"Success\",\"MESSAGE\":\"Success\",\"EXTTRID\":\"househelp1001\",\"TXNID\":\"35923596955\"}",
+    "gateway": "airtelMoneyUg",
+    "responseTime": "2020-02-13 15:51:02",
     "_links": {
       "self": [
         {
-          "href": "https://example.com/wp-json/wc/v3/coupons/720"
+          "href": "https://api.payhere.africa/v1/inpayments/12ahhdashh223h2882"
         }
       ],
       "collection": [
         {
-          "href": "https://example.com/wp-json/wc/v3/coupons"
+          "href": "https://api.payhere.africa/v1/inpayments"
         }
       ]
     }
   },
   {
-    "id": 719,
-    "code": "10off",
-    "amount": "10.00",
-    "date_created": "2017-03-21T15:23:00",
-    "date_created_gmt": "2017-03-21T18:23:00",
-    "date_modified": "2017-03-21T15:23:00",
-    "date_modified_gmt": "2017-03-21T18:23:00",
-    "discount_type": "percent",
-    "description": "",
-    "date_expires": null,
-    "date_expires_gmt": null,
-    "usage_count": 0,
-    "individual_use": true,
-    "product_ids": [],
-    "excluded_product_ids": [],
-    "usage_limit": null,
-    "usage_limit_per_user": null,
-    "limit_usage_to_x_items": null,
-    "free_shipping": false,
-    "product_categories": [],
-    "excluded_product_categories": [],
-    "exclude_sale_items": true,
-    "minimum_amount": "100.00",
-    "maximum_amount": "0.00",
-    "email_restrictions": [],
-    "used_by": [],
-    "meta_data": [],
+    "processingNumber": "676test",
+    "sender": "256757123456",
+    "principalAmount": "10000",
+    "serviceCharge": "0",
+    "amountCharged": "10000",
+    "narration": "test payment",
+    "date_added": "2020-02-13 16:55:47",
+    "transactionStatus": "success",
+    "transactionId": "35923596955",
+    "gatewayResponse": "{\"TXNSTATUS\":1,\"RESPONSE\":\"Success\",\"MESSAGE\":\"Success\",\"EXTTRID\":\"676test\",\"TXNID\":\"35923596955\"}",
+    "gateway": "airtelMoneyUg",
+    "responseTime": "2020-02-13 16:57:16",
     "_links": {
       "self": [
         {
-          "href": "https://example.com/wp-json/wc/v3/coupons/719"
+          "href": "https://api.payhere.africa/v1/inpayments/12ahhdashh223h2882"
         }
       ],
       "collection": [
         {
-          "href": "https://example.com/wp-json/wc/v3/coupons"
+          "href": "https://api.payhere.africa/v1/inpayments"
         }
       ]
     }
@@ -394,7 +299,6 @@ woocommerce.get("coupons").parsed_response
 
 | Parameter  | Type    | Description                                                                                                                  |
 | ---------- | ------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `context`  | string  | Scope under which the request is made; determines fields present in response. Options: `view` and `edit`. Default is `view`. |
 | `page`     | integer | Current page of the collection. Default is `1`.                                                                              |
 | `per_page` | integer | Maximum number of items to be returned in result set. Default is `10`.                                                       |
 | `search`   | string  | Limit results to those matching a string.                                                                                    |
@@ -407,214 +311,12 @@ woocommerce.get("coupons").parsed_response
 | `orderby`  | string  | Sort collection by object attribute. Options: `date`, `id`, `include`, `title` and `slug`. Default is `date`.                |
 | `code`     | string  | Limit result set to resources with a specific code.                                                                          |
 
-## Update a coupon ##
+## Batch inpayments ##
 
-This API lets you make changes to a coupon.
-
-### HTTP request ###
-
-<div class="api-endpoint">
-	<div class="endpoint-data">
-		<i class="label label-put">PUT</i>
-		<h6>/wp-json/wc/v3/coupons/&lt;id&gt;</h6>
-	</div>
-</div>
-
-```shell
-curl -X PUT https://example.com/wp-json/wc/v3/coupons/719 \
-	-u consumer_key:consumer_secret \
-	-H "Content-Type: application/json" \
-	-d '{
-  "amount": "5"
-}'
-```
-
-```javascript
-const data = {
-  amount: "5"
-};
-
-WooCommerce.put("coupons/719", data)
-  .then((response) => {
-    console.log(response.data);
-  })
-  .catch((error) => {
-    console.log(error.response.data);
-  });
-```
-
-```php
-<?php 
-$data = [
-    'amount' => '5'
-];
-
-print_r($woocommerce->put('coupons/719', $data)); 
-?>
-```
-
-```python
-data = {
-    "amount": "5"
-}
-
-print(wcapi.put("coupons/719", data).json())
-```
-
-```ruby
-data = {
-  amount: "5"
-}
-
-woocommerce.put("coupons/719", data).parsed_response
-```
-
-> JSON response example:
-
-```json
-{
-  "id": 719,
-  "code": "10off",
-  "amount": "5.00",
-  "date_created": "2017-03-21T15:23:00",
-  "date_created_gmt": "2017-03-21T18:23:00",
-  "date_modified": "2017-03-21T15:26:16",
-  "date_modified_gmt": "2017-03-21T18:26:16",
-  "discount_type": "percent",
-  "description": "",
-  "date_expires": null,
-  "date_expires_gmt": null,
-  "usage_count": 0,
-  "individual_use": true,
-  "product_ids": [],
-  "excluded_product_ids": [],
-  "usage_limit": null,
-  "usage_limit_per_user": null,
-  "limit_usage_to_x_items": null,
-  "free_shipping": false,
-  "product_categories": [],
-  "excluded_product_categories": [],
-  "exclude_sale_items": true,
-  "minimum_amount": "100.00",
-  "maximum_amount": "0.00",
-  "email_restrictions": [],
-  "used_by": [],
-  "meta_data": [],
-  "_links": {
-    "self": [
-      {
-        "href": "https://example.com/wp-json/wc/v3/coupons/719"
-      }
-    ],
-    "collection": [
-      {
-        "href": "https://example.com/wp-json/wc/v3/coupons"
-      }
-    ]
-  }
-}
-```
-
-## Delete a coupon ##
-
-This API helps you delete a coupon.
-
-### HTTP request ###
-
-<div class="api-endpoint">
-	<div class="endpoint-data">
-		<i class="label label-delete">DELETE</i>
-		<h6>/wp-json/wc/v3/coupons/&lt;id&gt;</h6>
-	</div>
-</div>
-
-```shell
-curl -X DELETE https://example.com/wp-json/wc/v3/coupons/719?force=true \
-	-u consumer_key:consumer_secret
-```
-
-```javascript
-WooCommerce.delete("coupons/719", {
-  force: true
-})
-  .then((response) => {
-    console.log(response.data);
-  })
-  .catch((error) => {
-    console.log(error.response.data);
-  });
-```
-
-```php
-<?php print_r($woocommerce->delete('coupons/719', ['force' => true])); ?>
-```
-
-```python
-print(wcapi.delete("coupons/719", params={"force": True}).json())
-```
-
-```ruby
-woocommerce.delete("coupons/719", force: true).parsed_response
-```
-
-> JSON response example:
-
-```json
-{
-  "id": 719,
-  "code": "10off",
-  "amount": "5.00",
-  "date_created": "2017-03-21T15:23:00",
-  "date_created_gmt": "2017-03-21T18:23:00",
-  "date_modified": "2017-03-21T15:26:16",
-  "date_modified_gmt": "2017-03-21T18:26:16",
-  "discount_type": "percent",
-  "description": "",
-  "date_expires": null,
-  "date_expires_gmt": null,
-  "usage_count": 0,
-  "individual_use": true,
-  "product_ids": [],
-  "excluded_product_ids": [],
-  "usage_limit": null,
-  "usage_limit_per_user": null,
-  "limit_usage_to_x_items": null,
-  "free_shipping": false,
-  "product_categories": [],
-  "excluded_product_categories": [],
-  "exclude_sale_items": true,
-  "minimum_amount": "100.00",
-  "maximum_amount": "0.00",
-  "email_restrictions": [],
-  "used_by": [],
-  "meta_data": [],
-  "_links": {
-    "self": [
-      {
-        "href": "https://example.com/wp-json/wc/v3/coupons/719"
-      }
-    ],
-    "collection": [
-      {
-        "href": "https://example.com/wp-json/wc/v3/coupons"
-      }
-    ]
-  }
-}
-```
-
-#### Available parameters ####
-
-| Parameter |  Type  |                               Description                                |
-|-----------|--------|--------------------------------------------------------------------------|
-| `force`   | string | Use `true` whether to permanently delete the coupon, Default is `false`. |
-
-## Batch update coupons ##
-
-This API helps you to batch create, update and delete multiple coupons.
+This API helps you to batch create multiple inpayments.
 
 <aside class="notice">
-Note: By default it's limited to up to 100 objects to be created, updated or deleted. 
+Note: By default it's limited to up to 100 objects to be created. 
 </aside>
 
 ### HTTP request ###
@@ -622,41 +324,30 @@ Note: By default it's limited to up to 100 objects to be created, updated or del
 <div class="api-endpoint">
 	<div class="endpoint-data">
 		<i class="label label-post">POST</i>
-		<h6>/wp-json/wc/v3/coupons/batch</h6>
+		<h6>/inpayments/batch</h6>
 	</div>
 </div>
 
 ```shell
-curl -X POST https://example.com//wp-json/wc/v3/coupons/batch \
-	-u consumer_key:consumer_secret \
-	-H "Content-Type: application/json" \
+curl -X POST https://api.payhere.africa/v1//inpayments/batch \
+	-u username:your_username \
+  -u password:your_password \
+  -H "APP-ID: your_app_id" \
+  -H "Content-Type: application/json"
 	-d '{
   "create": [
     {
-      "code": "20off",
-      "discount_type": "percent",
-      "amount": "20",
-      "individual_use": true,
-      "exclude_sale_items": true,
-      "minimum_amount": "100.00"
+      "processingNumber": "12ahhdashh223h2882",
+      "msisdn": 256772123456,
+      "amount": 500000,
+      "narration": "Paying for 4 nights in riley hotel"
     },
     {
-      "code": "30off",
-      "discount_type": "percent",
-      "amount": "30",
-      "individual_use": true,
-      "exclude_sale_items": true,
-      "minimum_amount": "100.00"
+      "processingNumber": "123-umeme-2882",
+      "msisdn": 256772123456,
+      "amount": 120000,
+      "narration": "Paying for yaka"
     }
-  ],
-  "update": [
-    {
-      "id": 719,
-      "minimum_amount": "50.00"
-    }
-  ],
-  "delete": [
-    720
   ]
 }'
 ```
@@ -665,34 +356,21 @@ curl -X POST https://example.com//wp-json/wc/v3/coupons/batch \
 const data = {
   create: [
     {
-      code: "20off",
-      discount_type: "percent",
-      amount: "20",
-      individual_use: true,
-      exclude_sale_items: true,
-      minimum_amount: "100.00"
+      processingNumber: "12ahhdashh223h2882",
+      msisdn: 256772123456,
+      amount: 500000,
+      narration: "Paying for 4 nights in riley hotel"
     },
     {
-      code: "30off",
-      discount_type: "percent",
-      amount: "30",
-      individual_use: true,
-      exclude_sale_items: true,
-      minimum_amount: "100.00"
+      processingNumber: "123-umeme-2882",
+      msisdn: 256772123456,
+      amount: 120000,
+      narration: "Paying for yaka"
     }
-  ],
-  update: [
-    {
-      id: 719,
-      minimum_amount: "50.00"
-    }
-  ],
-  delete: [
-    720
   ]
 };
 
-WooCommerce.post("coupons/batch", data)
+Payhere.post("inpayments/batch", data)
   .then((response) => {
     console.log(response.data);
   })
@@ -706,34 +384,21 @@ WooCommerce.post("coupons/batch", data)
 $data = [
     'create' => [
         [
-            'code' => '20off',
-            'discount_type' => 'percent',
-            'amount' => '20',
-            'individual_use' => true,
-            'exclude_sale_items' => true,
-            'minimum_amount' => '100.00'
+            'processingNumber' => '12ahhdashh223h2882',
+            'msisdn' => 256772123456,
+            'amount' => 500000,
+            'narration' => 'Paying for 4 nights in riley hotel'
         ],
         [
-            'code' => '30off',
-            'discount_type' => 'percent',
-            'amount' => '30',
-            'individual_use' => true,
-            'exclude_sale_items' => true,
-            'minimum_amount' => '100.00'
+            'processingNumber' => '123-umeme-2882',
+            'msisdn' => 256772123456,
+            'amount' => 120000,
+            'narration' => 'Paying for yaka'
         ]
-    ],
-    'update' => [
-        [
-            'id' => 719,
-            'minimum_amount' => '50.00'
-        ]
-    ],
-    'delete' => [
-        720
     ]
 ];
 
-print_r($woocommerce->post('coupons/batch', $data));
+print_r($payhere->post('inpayments/batch', $data));
 ?>
 ```
 
@@ -741,68 +406,42 @@ print_r($woocommerce->post('coupons/batch', $data));
 data = {
     "create": [
         {
-            "code": "20off",
-            "discount_type": "percent",
-            "amount": "20",
-            "individual_use": True,
-            "exclude_sale_items": True,
-            "minimum_amount": "100.00"
+            "processingNumber": "12ahhdashh223h2882",
+            "msisdn": 256772123456,
+            "amount": 500000,
+            "narration": "Paying for 4 nights in riley hotel"
         },
         {
-            "code": "30off",
-            "discount_type": "percent",
-            "amount": "30",
-            "individual_use": True,
-            "exclude_sale_items": True,
-            "minimum_amount": "100.00"
+            "processingNumber": "123-umeme-2882",
+            "msisdn": 256772123456,
+            "amount": 120000,
+            "narration": "Paying for yaka"
         }
-    ],
-    "update": [
-        {
-            "id": 719,
-            "minimum_amount": "50.00"
-        }
-    ],
-    "delete": [
-        720
     ]
 }
 
-print(wcapi.post("coupons/batch", data).json())
+print(wcapi.post("inpayments/batch", data).json())
 ```
 
 ```ruby
 data = {
   create: [
     {
-      code: "20off",
-      discount_type: "percent",
-      amount: "20",
-      individual_use: true,
-      exclude_sale_items: true,
-      minimum_amount: "100.00"
+      processingNumber: "12ahhdashh223h2882",
+      msisdn: 256772123456,
+      amount: 500000,
+      narration: "Paying for 4 nights in riley hotel"
     },
     {
-      code: "30off",
-      discount_type: "percent",
-      amount: "30",
-      individual_use: true,
-      exclude_sale_items: true,
-      minimum_amount: "100.00"
+      processingNumber: "123-umeme-2882",
+      msisdn: 256772123456,
+      amount: 120,
+      narration: "Paying for yaka"
     }
-  ],
-  update: [
-    {
-      id: 719,
-      minimum_amount: "50.00"
-    }
-  ],
-  delete: [
-    720
   ]
 }
 
-woocommerce.post("coupons/batch", data).parsed_response
+payhere.post("inpayments/batch", data).parsed_response
 ```
 
 > JSON response example:
@@ -811,169 +450,33 @@ woocommerce.post("coupons/batch", data).parsed_response
 {
   "create": [
     {
-      "id": 721,
-      "code": "20off",
-      "amount": "20.00",
-      "date_created": "2017-03-21T15:27:29",
-      "date_created_gmt": "2017-03-21T18:27:29",
-      "date_modified": "2017-03-21T15:27:29",
-      "date_modified_gmt": "2017-03-21T18:27:29",
-      "discount_type": "percent",
-      "description": "",
-      "date_expires": null,
-      "date_expires_gmt": null,
-      "usage_count": 0,
-      "individual_use": true,
-      "product_ids": [],
-      "excluded_product_ids": [],
-      "usage_limit": null,
-      "usage_limit_per_user": null,
-      "limit_usage_to_x_items": null,
-      "free_shipping": false,
-      "product_categories": [],
-      "excluded_product_categories": [],
-      "exclude_sale_items": true,
-      "minimum_amount": "100.00",
-      "maximum_amount": "0.00",
-      "email_restrictions": [],
-      "used_by": [],
-      "meta_data": [],
+      "processingNumber": "12ahhdashh223h2882",
+      "transactionStatus": "pending",
       "_links": {
         "self": [
           {
-            "href": "https://example.com/wp-json/wc/v3/coupons/721"
+            "href": "https://api.payhere.africa/v1/inpayments/12ahhdashh223h2882"
           }
         ],
         "collection": [
           {
-            "href": "https://example.com/wp-json/wc/v3/coupons"
+            "href": "https://api.payhere.africa/v1/inpayments"
           }
         ]
       }
     },
     {
-      "id": 722,
-      "code": "30off",
-      "amount": "30.00",
-      "date_created": "2017-03-21T15:27:31",
-      "date_created_gmt": "2017-03-21T18:27:31",
-      "date_modified": "2017-03-21T15:27:31",
-      "date_modified_gmt": "2017-03-21T18:27:31",
-      "discount_type": "percent",
-      "description": "",
-      "date_expires": null,
-      "date_expires_gmt": null,
-      "usage_count": 0,
-      "individual_use": true,
-      "product_ids": [],
-      "excluded_product_ids": [],
-      "usage_limit": null,
-      "usage_limit_per_user": null,
-      "limit_usage_to_x_items": null,
-      "free_shipping": false,
-      "product_categories": [],
-      "excluded_product_categories": [],
-      "exclude_sale_items": true,
-      "minimum_amount": "100.00",
-      "maximum_amount": "0.00",
-      "email_restrictions": [],
-      "used_by": [],
-      "meta_data": [],
+      "processingNumber": "123-umeme-2882",
+      "transactionStatus": "pending",
       "_links": {
         "self": [
           {
-            "href": "https://example.com/wp-json/wc/v3/coupons/722"
+            "href": "https://api.payhere.africa/v1/inpayments/123-umeme-2882"
           }
         ],
         "collection": [
           {
-            "href": "https://example.com/wp-json/wc/v3/coupons"
-          }
-        ]
-      }
-    }
-  ],
-  "update": [
-    {
-      "id": 719,
-      "code": "10off",
-      "amount": "5.00",
-      "date_created": "2017-03-21T15:23:00",
-      "date_created_gmt": "2017-03-21T18:23:00",
-      "date_modified": "2017-03-21T15:27:32",
-      "date_modified_gmt": "2017-03-21T18:27:32",
-      "discount_type": "percent",
-      "description": "",
-      "date_expires": null,
-      "date_expires_gmt": null,
-      "usage_count": 0,
-      "individual_use": true,
-      "product_ids": [],
-      "excluded_product_ids": [],
-      "usage_limit": null,
-      "usage_limit_per_user": null,
-      "limit_usage_to_x_items": null,
-      "free_shipping": false,
-      "product_categories": [],
-      "excluded_product_categories": [],
-      "exclude_sale_items": true,
-      "minimum_amount": "50.00",
-      "maximum_amount": "0.00",
-      "email_restrictions": [],
-      "used_by": [],
-      "meta_data": [],
-      "_links": {
-        "self": [
-          {
-            "href": "https://example.com/wp-json/wc/v3/coupons/719"
-          }
-        ],
-        "collection": [
-          {
-            "href": "https://example.com/wp-json/wc/v3/coupons"
-          }
-        ]
-      }
-    }
-  ],
-  "delete": [
-    {
-      "id": 720,
-      "code": "free shipping",
-      "amount": "0.00",
-      "date_created": "2017-03-21T15:25:02",
-      "date_created_gmt": "2017-03-21T18:25:02",
-      "date_modified": "2017-03-21T15:25:02",
-      "date_modified_gmt": "2017-03-21T18:25:02",
-      "discount_type": "fixed_cart",
-      "description": "",
-      "date_expires": null,
-      "date_expires_gmt": null,
-      "usage_count": 0,
-      "individual_use": true,
-      "product_ids": [],
-      "excluded_product_ids": [],
-      "usage_limit": null,
-      "usage_limit_per_user": null,
-      "limit_usage_to_x_items": null,
-      "free_shipping": true,
-      "product_categories": [],
-      "excluded_product_categories": [],
-      "exclude_sale_items": false,
-      "minimum_amount": "0.00",
-      "maximum_amount": "0.00",
-      "email_restrictions": [],
-      "used_by": [],
-      "meta_data": [],
-      "_links": {
-        "self": [
-          {
-            "href": "https://example.com/wp-json/wc/v3/coupons/720"
-          }
-        ],
-        "collection": [
-          {
-            "href": "https://example.com/wp-json/wc/v3/coupons"
+            "href": "https://api.payhere.africa/v1/inpayments"
           }
         ]
       }

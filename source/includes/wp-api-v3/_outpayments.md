@@ -1,148 +1,60 @@
-# Out payments #
+# Out Payments #
 
-The customer API allows you to create, view, update, and delete individual, or a batch, of customers.
+The outpayments API allows a user to recieve money into their payment account/ mobile money number.
 
-## Customer properties ##
+## Outpayment properties ##
 
-| Attribute            | Type      | Description                                                                                                |
-|----------------------|-----------|------------------------------------------------------------------------------------------------------------|
-| `id`                 | integer   | Unique identifier for the resource. <i class="label label-info">read-only</i>                              |
-| `date_created`       | date-time | The date the customer was created, in the site's timezone. <i class="label label-info">read-only</i>       |
-| `date_created_gmt`   | date-time | The date the customer was created, as GMT. <i class="label label-info">read-only</i>                          |
-| `date_modified`      | date-time | The date the customer was last modified, in the site's timezone. <i class="label label-info">read-only</i> |
-| `date_modified_gmt`  | date-time | The date the customer was last modified, as GMT. <i class="label label-info">read-only</i>                 |
-| `email`              | string    | The email address for the customer. <i class="label label-info">mandatory</i>                              |
-| `first_name`         | string    | Customer first name.                                                                                       |
-| `last_name`          | string    | Customer last name.                                                                                        |
-| `role`               | string    | Customer role. <i class="label label-info">read-only</i>                                                   |
-| `username`           | string    | Customer login name.                                                                                       |
-| `password`           | string    | Customer password. <i class="label label-info">write-only</i>                                              |
-| `billing`            | object    | List of billing address data. See [Customer - Billing properties](#customer-billing-properties)            |
-| `shipping`           | object    | List of shipping address data. See [Customer - Shipping properties](#customer-shipping-properties)         |
-| `is_paying_customer` | bool      | Is the customer a paying customer? <i class="label label-info">read-only</i>                               |
-| `avatar_url`         | string    | Avatar URL. <i class="label label-info">read-only</i>                                                      |
-| `meta_data`          | array     | Meta data. See [Customer - Meta data properties](#customer-meta-data-properties)                           |
+| Attribute                     | Type      | Description                                                                                                                          |
+| ----------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `processingNumber`                          | string   | Unique identifier for the payment object. <i class="label label-info">mandatory</i>                                                          |
+| `sender`                        | string    | Ther person expecting the payment. <i class="label label-info">mandatory</i>                                                                               |
+| `amountcharged`                      | string    | The amount of money to be received. Should always be numeric, even if setting a percentage.                                                      |
+| `date_added`                | date-time | The date the money was received, in the site's timezone. <i class="label label-info">read-only</i>                                   |
+| `transactionStatus`               | string    | Determines if the payment transaction was successful at the aggregators end <i class="label label-info">read-only</i> 
+                                       |
+| `narration`                 | string    | Description of why the money is being withdrawn.                                                                                                                  |
+| `transactionId`                | integer    | The unique transaction id of the money that has been received <i class="label label-info">read-only</i>                                                                                 |
+| `gatewayResponse`            | string    | The response from the aggregator. <i class="label label-info">read-only</i>                                                                                  |
+| `gateway`                 | integer   | Aggregator whos is facilitating the money movement. <i class="label label-info">read-only</i>                                          |
+| `responseTime`                | date-time | The time it took for the full transaction to be completed. <i class="label label-info">read-only</i>
+                                  |                                |
 
-### Customer - Billing properties ###
+## Create ann outpayment ##
 
-| Attribute    | Type   | Description                                          |
-|--------------|--------|------------------------------------------------------|
-| `first_name` | string | First name.                                          |
-| `last_name`  | string | Last name.                                           |
-| `company`    | string | Company name.                                        |
-| `address_1`  | string | Address line 1                                       |
-| `address_2`  | string | Address line 2                                       |
-| `city`       | string | City name.                                           |
-| `state`      | string | ISO code or name of the state, province or district. |
-| `postcode`   | string | Postal code.                                         |
-| `country`    | string | ISO code of the country.                             |
-| `email`      | string | Email address.                                       |
-| `phone`      | string | Phone number.                                        |
-
-### Customer - Shipping properties ###
-
-| Attribute    | Type   | Description                                          |
-|--------------|--------|------------------------------------------------------|
-| `first_name` | string | First name.                                          |
-| `last_name`  | string | Last name.                                           |
-| `company`    | string | Company name.                                        |
-| `address_1`  | string | Address line 1                                       |
-| `address_2`  | string | Address line 2                                       |
-| `city`       | string | City name.                                           |
-| `state`      | string | ISO code or name of the state, province or district. |
-| `postcode`   | string | Postal code.                                         |
-| `country`    | string | ISO code of the country.                             |
-
-### Customer - Meta data properties ###
-
-| Attribute | Type    | Description                                        |
-|-----------|---------|----------------------------------------------------|
-| `id`      | integer | Meta ID. <i class="label label-info">read-only</i> |
-| `key`     | string  | Meta key.                                          |
-| `value`   | string  | Meta value.                                        |
-
-## Create a customer ##
-
-This API helps you to create a new customer.
+This API helps you to create a new outpayment.
 
 ### HTTP request ###
 
 <div class="api-endpoint">
 	<div class="endpoint-data">
 		<i class="label label-post">POST</i>
-		<h6>/wp-json/wc/v3/customers</h6>
+		<h6>/outpayments</h6>
 	</div>
 </div>
 
 ```shell
-curl -X POST https://example.com/wp-json/wc/v3/customers \
-	-u consumer_key:consumer_secret \
-	-H "Content-Type: application/json" \
+curl -X POST https://api.payhere.africa/v1/outpayments \
+	-u username:your_username \
+  -u password:your_password \
+  -H "APP-ID: your_app_id" \
+  -H "Content-Type: application/json" \
 	-d '{
-  "email": "john.doe@example.com",
-  "first_name": "John",
-  "last_name": "Doe",
-  "username": "john.doe",
-  "billing": {
-    "first_name": "John",
-    "last_name": "Doe",
-    "company": "",
-    "address_1": "969 Market",
-    "address_2": "",
-    "city": "San Francisco",
-    "state": "CA",
-    "postcode": "94103",
-    "country": "US",
-    "email": "john.doe@example.com",
-    "phone": "(555) 555-5555"
-  },
-  "shipping": {
-    "first_name": "John",
-    "last_name": "Doe",
-    "company": "",
-    "address_1": "969 Market",
-    "address_2": "",
-    "city": "San Francisco",
-    "state": "CA",
-    "postcode": "94103",
-    "country": "US"
-  }
+  "processingNumber": "800-jan-salary",
+  "msisdn": 256772123456,
+  "amount": 500000,
+  "narration": "Junuary salary"
 }'
 ```
 
 ```javascript
 const data = {
-  email: "john.doe@example.com",
-  first_name: "John",
-  last_name: "Doe",
-  username: "john.doe",
-  billing: {
-    first_name: "John",
-    last_name: "Doe",
-    company: "",
-    address_1: "969 Market",
-    address_2: "",
-    city: "San Francisco",
-    state: "CA",
-    postcode: "94103",
-    country: "US",
-    email: "john.doe@example.com",
-    phone: "(555) 555-5555"
-  },
-  shipping: {
-    first_name: "John",
-    last_name: "Doe",
-    company: "",
-    address_1: "969 Market",
-    address_2: "",
-    city: "San Francisco",
-    state: "CA",
-    postcode: "94103",
-    country: "US"
-  }
+  processingNumber: "800-jan-salary",
+  msisdn: 256772123456,
+  amount: 500000,
+  narration: "Junuary salary"
 };
 
-WooCommerce.post("customers", data)
+Payhere.post("outpayments", data)
   .then((response) => {
     console.log(response.data);
   })
@@ -154,186 +66,82 @@ WooCommerce.post("customers", data)
 ```php
 <?php
 $data = [
-    'email' => 'john.doe@example.com',
-    'first_name' => 'John',
-    'last_name' => 'Doe',
-    'username' => 'john.doe',
-    'billing' => [
-        'first_name' => 'John',
-        'last_name' => 'Doe',
-        'company' => '',
-        'address_1' => '969 Market',
-        'address_2' => '',
-        'city' => 'San Francisco',
-        'state' => 'CA',
-        'postcode' => '94103',
-        'country' => 'US',
-        'email' => 'john.doe@example.com',
-        'phone' => '(555) 555-5555'
-    ],
-    'shipping' => [
-        'first_name' => 'John',
-        'last_name' => 'Doe',
-        'company' => '',
-        'address_1' => '969 Market',
-        'address_2' => '',
-        'city' => 'San Francisco',
-        'state' => 'CA',
-        'postcode' => '94103',
-        'country' => 'US'
-    ]
+    'processingNumber' => '800-jan-salary',
+    'msisdn' => 256772123456,
+    'amount' => 500000,
+    'narration' => 'Junuary salary'
 ];
 
-print_r($woocommerce->post('customers', $data));
+print_r($payhere->post('outpayments', $data));
 ?>
 ```
 
 ```python
 data = {
-    "email": "john.doe@example.com",
-    "first_name": "John",
-    "last_name": "Doe",
-    "username": "john.doe",
-    "billing": {
-        "first_name": "John",
-        "last_name": "Doe",
-        "company": "",
-        "address_1": "969 Market",
-        "address_2": "",
-        "city": "San Francisco",
-        "state": "CA",
-        "postcode": "94103",
-        "country": "US",
-        "email": "john.doe@example.com",
-        "phone": "(555) 555-5555"
-    },
-    "shipping": {
-        "first_name": "John",
-        "last_name": "Doe",
-        "company": "",
-        "address_1": "969 Market",
-        "address_2": "",
-        "city": "San Francisco",
-        "state": "CA",
-        "postcode": "94103",
-        "country": "US"
-    }
+    "processingNumber": "800-jan-salary",
+    "msisdn": 256772123456,
+    "amount": 500000,
+    "narration": "Junuary salary"
 }
 
-print(wcapi.post("customers", data).json())
+print(wcapi.post("outpayments", data).json())
 ```
 
 ```ruby
 data = {
-  email: "john.doe@example.com",
-  first_name: "John",
-  last_name: "Doe",
-  username: "john.doe",
-  billing: {
-    first_name: "John",
-    last_name: "Doe",
-    company: "",
-    address_1: "969 Market",
-    address_2: "",
-    city: "San Francisco",
-    state: "CA",
-    postcode: "94103",
-    country: "US",
-    email: "john.doe@example.com",
-    phone: "(555) 555-5555"
-  },
-  shipping: {
-    first_name: "John",
-    last_name: "Doe",
-    company: "",
-    address_1: "969 Market",
-    address_2: "",
-    city: "San Francisco",
-    state: "CA",
-    postcode: "94103",
-    country: "US"
-  }
+  processingNumber: "800-jan-salary",
+  msisdn: 256772123456,
+  amount: 500000,
+  narration: "Junuary salary"
 }
 
-woocommerce.post("customers", data).parsed_response
+payhere.post("outpayments", data).parsed_response
 ```
 
 > JSON response example:
 
 ```json
 {
-  "id": 25,
-  "date_created": "2017-03-21T16:09:28",
-  "date_created_gmt": "2017-03-21T19:09:28",
-  "date_modified": "2017-03-21T16:09:30",
-  "date_modified_gmt": "2017-03-21T19:09:30",
-  "email": "john.doe@example.com",
-  "first_name": "John",
-  "last_name": "Doe",
-  "role": "customer",
-  "username": "john.doe",
-  "billing": {
-    "first_name": "John",
-    "last_name": "Doe",
-    "company": "",
-    "address_1": "969 Market",
-    "address_2": "",
-    "city": "San Francisco",
-    "state": "CA",
-    "postcode": "94103",
-    "country": "US",
-    "email": "john.doe@example.com",
-    "phone": "(555) 555-5555"
-  },
-  "shipping": {
-    "first_name": "John",
-    "last_name": "Doe",
-    "company": "",
-    "address_1": "969 Market",
-    "address_2": "",
-    "city": "San Francisco",
-    "state": "CA",
-    "postcode": "94103",
-    "country": "US"
-  },
-  "is_paying_customer": false,
-  "avatar_url": "https://secure.gravatar.com/avatar/8eb1b522f60d11fa897de1dc6351b7e8?s=96",
-  "meta_data": [],
+  "processingNumber": "800-jan-salary",
+  "transactionStatus": "pending",
   "_links": {
     "self": [
       {
-        "href": "https://example.com/wp-json/wc/v3/customers/25"
+        "href": "https://api.payhere.africa/v1/outpayments/800-jan-salary"
       }
     ],
     "collection": [
       {
-        "href": "https://example.com/wp-json/wc/v3/customers"
+        "href": "https://api.payhere.africa/v1/outpayments"
       }
     ]
   }
 }
 ```
 
-## Retrieve a customer ##
+## Retrieve an outpayment ##
 
-This API lets you retrieve and view a specific customer by ID.
+This API lets you retrieve and view a specific outpayment by ID.
 
 ### HTTP request ###
 
 <div class="api-endpoint">
 	<div class="endpoint-data">
 		<i class="label label-get">GET</i>
-		<h6>/wp-json/wc/v3/customers/&lt;id&gt;</h6>
+		<h6>/outpayments/&lt;id&gt;</h6>
 	</div>
 </div>
 
 ```shell
-curl https://example.com/wp-json/wc/v3/customers/25 \
-	-u consumer_key:consumer_secret
+curl https://api.payhere.africa/v1/outpayments/800-jan-salary \
+	-u username:your_username \
+  -u password:your_password \
+  -H "APP-ID: your_app_id" \
+  -H "Content-Type: application/json"
 ```
 
 ```javascript
-WooCommerce.get("customers/25")
+Payhere.get("outpayments/800-jan-salary")
   .then((response) => {
     console.log(response.data);
   })
@@ -343,93 +151,71 @@ WooCommerce.get("customers/25")
 ```
 
 ```php
-<?php print_r($woocommerce->get('customers/25')); ?>
+<?php print_r($payhere->get('outpayments/800-jan-salary')); ?>
 ```
 
 ```python
-print(wcapi.get("customers/25").json())
+print(wcapi.get("outpayments/719").json())
 ```
 
 ```ruby
-woocommerce.get("customers/25").parsed_response
+payhere.get("outpayments/800-jan-salary").parsed_response
 ```
 
 > JSON response example:
 
 ```json
 {
-  "id": 25,
-  "date_created": "2017-03-21T16:09:28",
-  "date_created_gmt": "2017-03-21T19:09:28",
-  "date_modified": "2017-03-21T16:09:30",
-  "date_modified_gmt": "2017-03-21T19:09:30",
-  "email": "john.doe@example.com",
-  "first_name": "John",
-  "last_name": "Doe",
-  "role": "customer",
-  "username": "john.doe",
-  "billing": {
-    "first_name": "John",
-    "last_name": "Doe",
-    "company": "",
-    "address_1": "969 Market",
-    "address_2": "",
-    "city": "San Francisco",
-    "state": "CA",
-    "postcode": "94103",
-    "country": "US",
-    "email": "john.doe@example.com",
-    "phone": "(555) 555-5555"
-  },
-  "shipping": {
-    "first_name": "John",
-    "last_name": "Doe",
-    "company": "",
-    "address_1": "969 Market",
-    "address_2": "",
-    "city": "San Francisco",
-    "state": "CA",
-    "postcode": "94103",
-    "country": "US"
-  },
-  "is_paying_customer": false,
-  "avatar_url": "https://secure.gravatar.com/avatar/8eb1b522f60d11fa897de1dc6351b7e8?s=96",
-  "meta_data": [],
+  "processingNumber": "800-jan-salary",
+  "sender": "256703123456",
+  "principalAmount": "500000",
+  "serviceCharge": "0",
+  "amountcharged": "500000",
+  "narration": "January salaray",
+  "date_added": "2020-02-13 16:08:35",
+  "transactionStatus": "success",
+  "transactionId": "89223596900",
+  "gatewayResponse": "{\"TXNSTATUS\":1,\"RESPONSE\":\"Success\",\"MESSAGE\":\"Success\",\"EXTTRID\":\"800-jan-salary\",\"TXNID\":\"89223596900\"}",
+  "gateway": "airtelMoneyUg",
+  "responseTime": "2020-02-13 16:10:16",
   "_links": {
     "self": [
       {
-        "href": "https://example.com/wp-json/wc/v3/customers/25"
+        "href": "https://api.payhere.africa/v1/outpayments/800-jan-salary"
       }
     ],
     "collection": [
       {
-        "href": "https://example.com/wp-json/wc/v3/customers"
+        "href": "https://api.payhere.africa/v1/outpayments"
       }
     ]
   }
 }
 ```
 
-## List all customers ##
+## List all outpayments ##
 
-This API helps you to view all the customers.
+This API helps you to list all the outpayments that have been created.
 
 ### HTTP request ###
 
 <div class="api-endpoint">
 	<div class="endpoint-data">
 		<i class="label label-get">GET</i>
-		<h6>/wp-json/wc/v3/customers</h6>
+		<h6>/outpayments</h6>
 	</div>
 </div>
 
 ```shell
-curl https://example.com/wp-json/wc/v3/customers \
-	-u consumer_key:consumer_secret
+curl https://api.payhere.africa/v1/outpayments \
+	-u username:your_username \
+  -u password:your_password \
+  -H "APP-ID: your_app_id" \
+  -H "Content-Type: application/json"
 ```
 
 ```javascript
-WooCommerce.get("customers")
+Payhere.get("outpayments")
   .then((response) => {
     console.log(response.data);
   })
@@ -439,15 +225,15 @@ WooCommerce.get("customers")
 ```
 
 ```php
-<?php print_r($woocommerce->get('customers')); ?>
+<?php print_r($payhere->get('outpayments')); ?>
 ```
 
 ```python
-print(wcapi.get("customers").json())
+print(wcapi.get("outpayments").json())
 ```
 
 ```ruby
-woocommerce.get("customers").parsed_response
+payhere.get("outpayments").parsed_response
 ```
 
 > JSON response example:
@@ -455,103 +241,53 @@ woocommerce.get("customers").parsed_response
 ```json
 [
   {
-    "id": 26,
-    "date_created": "2017-03-21T16:11:14",
-    "date_created_gmt": "2017-03-21T19:11:14",
-    "date_modified": "2017-03-21T16:11:16",
-    "date_modified_gmt": "2017-03-21T19:11:16",
-    "email": "joao.silva@example.com",
-    "first_name": "João",
-    "last_name": "Silva",
-    "role": "customer",
-    "username": "joao.silva",
-    "billing": {
-      "first_name": "João",
-      "last_name": "Silva",
-      "company": "",
-      "address_1": "Av. Brasil, 432",
-      "address_2": "",
-      "city": "Rio de Janeiro",
-      "state": "RJ",
-      "postcode": "12345-000",
-      "country": "BR",
-      "email": "joao.silva@example.com",
-      "phone": "(55) 5555-5555"
-    },
-    "shipping": {
-      "first_name": "João",
-      "last_name": "Silva",
-      "company": "",
-      "address_1": "Av. Brasil, 432",
-      "address_2": "",
-      "city": "Rio de Janeiro",
-      "state": "RJ",
-      "postcode": "12345-000",
-      "country": "BR"
-    },
-    "is_paying_customer": false,
-    "avatar_url": "https://secure.gravatar.com/avatar/be7b5febff88a2d947c3289e90cdf017?s=96",
-    "meta_data": [],
+    "processingNumber": "800-jan-salary",
+    "sender": "256703123456",
+    "principalAmount": "500000",
+    "serviceCharge": "0",
+    "amountcharged": "500000",
+    "narration": "January salaray",
+    "date_added": "2020-02-13 16:08:35",
+    "transactionStatus": "success",
+    "transactionId": "89223596900",
+    "gatewayResponse": "{\"TXNSTATUS\":1,\"RESPONSE\":\"Success\",\"MESSAGE\":\"Success\",\"EXTTRID\":\"800-jan-salary\",\"TXNID\":\"89223596900\"}",
+    "gateway": "airtelMoneyUg",
+    "responseTime": "2020-02-13 16:10:16",
     "_links": {
       "self": [
         {
-          "href": "https://example.com/wp-json/wc/v3/customers/26"
+          "href": "https://api.payhere.africa/v1/outpayments/800-jan-salary"
         }
       ],
       "collection": [
         {
-          "href": "https://example.com/wp-json/wc/v3/customers"
+          "href": "https://api.payhere.africa/v1/outpayments"
         }
       ]
     }
   },
   {
-    "id": 25,
-    "date_created": "2017-03-21T16:09:28",
-    "date_created_gmt": "2017-03-21T19:09:28",
-    "date_modified": "2017-03-21T16:09:30",
-    "date_modified_gmt": "2017-03-21T19:09:30",
-    "email": "john.doe@example.com",
-    "first_name": "John",
-    "last_name": "Doe",
-    "role": "customer",
-    "username": "john.doe",
-    "billing": {
-      "first_name": "John",
-      "last_name": "Doe",
-      "company": "",
-      "address_1": "969 Market",
-      "address_2": "",
-      "city": "San Francisco",
-      "state": "CA",
-      "postcode": "94103",
-      "country": "US",
-      "email": "john.doe@example.com",
-      "phone": "(555) 555-5555"
-    },
-    "shipping": {
-      "first_name": "John",
-      "last_name": "Doe",
-      "company": "",
-      "address_1": "969 Market",
-      "address_2": "",
-      "city": "San Francisco",
-      "state": "CA",
-      "postcode": "94103",
-      "country": "US"
-    },
-    "is_paying_customer": false,
-    "avatar_url": "https://secure.gravatar.com/avatar/8eb1b522f60d11fa897de1dc6351b7e8?s=96",
-    "meta_data": [],
+    "processingNumber": "400-invoice-123",
+    "sender": "256703123456",
+    "principalAmount": "30000",
+    "serviceCharge": "0",
+    "amountcharged": "30000",
+    "narration": "Fuel for overtime",
+    "date_added": "2020-02-13 16:08:35",
+    "transactionStatus": "success",
+    "transactionId": "29988296900",
+    "gatewayResponse": "{\"TXNSTATUS\":1,\"RESPONSE\":\"Success\",\"MESSAGE\":\"Success\",\"EXTTRID\":\"400-invoice-123\",\"TXNID\":\"29988296900\"}",
+    "gateway": "airtelMoneyUg",
+    "responseTime": "2020-02-13 16:10:16",
     "_links": {
       "self": [
         {
-          "href": "https://example.com/wp-json/wc/v3/customers/25"
+          "href": "https://api.payhere.africa/v1/outpayments/400-invoice-123"
         }
       ],
       "collection": [
         {
-          "href": "https://example.com/wp-json/wc/v3/customers"
+          "href": "https://api.payhere.africa/v1/outpayments"
         }
       ]
     }
@@ -561,279 +297,26 @@ woocommerce.get("customers").parsed_response
 
 #### Available parameters ####
 
-| Parameter  | Type    | Description                                                                                                                                                                                 |
-| ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `context`  | string  | Scope under which the request is made; determines fields present in response. Options: `view` and `edit`. Default is `view`.                                                                |
-| `page`     | integer | Current page of the collection. Default is `1`.                                                                                                                                             |
-| `per_page` | integer | Maximum number of items to be returned in result set. Default is `10`.                                                                                                                      |
-| `search`   | string  | Limit results to those matching a string.                                                                                                                                                   |
-| `exclude`  | array   | Ensure result set excludes specific IDs.                                                                                                                                                    |
-| `include`  | array   | Limit result set to specific IDs.                                                                                                                                                           |
-| `offset`   | integer | Offset the result set by a specific number of items.                                                                                                                                        |
-| `order`    | string  | Order sort attribute ascending or descending. Options: `asc` and `desc`. Default is `asc`.                                                                                                  |
-| `orderby`  | string  | Sort collection by object attribute. Options: `id`, `include`, `name` and `registered_date`. Default is `name`.                                                                             |
-| `email`    | string  | Limit result set to resources with a specific email.                                                                                                                                        |
-| `role`     | string  | Limit result set to resources with a specific role. Options: `all`, `administrator`, `editor`, `author`, `contributor`, `subscriber`, `customer` and `shop_manager`. Default is `customer`. |
+| Parameter  | Type    | Description                                                                                                                  |
+| ---------- | ------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `page`     | integer | Current page of the collection. Default is `1`.                                                                              |
+| `per_page` | integer | Maximum number of items to be returned in result set. Default is `10`.                                                       |
+| `search`   | string  | Limit results to those matching a string.                                                                                    |
+| `after`    | string  | Limit response to resources published after a given ISO8601 compliant date.                                                  |
+| `before`   | string  | Limit response to resources published before a given ISO8601 compliant date.                                                 |
+| `exclude`  | array   | Ensure result set excludes specific IDs.                                                                                     |
+| `include`  | array   | Limit result set to specific ids.                                                                                            |
+| `offset`   | integer | Offset the result set by a specific number of items.                                                                         |
+| `order`    | string  | Order sort attribute ascending or descending. Options: `asc` and `desc`. Default is `desc`.                                  |
+| `orderby`  | string  | Sort collection by object attribute. Options: `date`, `id`, `include`, `title` and `slug`. Default is `date`.                |
+| `code`     | string  | Limit result set to resources with a specific code.                                                                          |
 
-## Update a customer ##
+## Batch outpayments ##
 
-This API lets you make changes to a customer.
-
-### HTTP request ###
-
-<div class="api-endpoint">
-	<div class="endpoint-data">
-		<i class="label label-put">PUT</i>
-		<h6>/wp-json/wc/v3/customers/&lt;id&gt;</h6>
-	</div>
-</div>
-
-```shell
-curl -X PUT https://example.com/wp-json/wc/v3/customers/25 \
-	-u consumer_key:consumer_secret \
-	-H "Content-Type: application/json" \
-	-d '{
-  "first_name": "James",
-  "billing": {
-    "first_name": "James"
-  },
-  "shipping": {
-    "first_name": "James"
-  }
-}'
-```
-
-```javascript
-const data = {
-  first_name: "James",
-  billing: {
-    first_name: "James"
-  },
-  shipping: {
-    first_name: "James"
-  }
-};
-
-WooCommerce.put("customers/25", data)
-  .then((response) => {
-    console.log(response.data);
-  })
-  .catch((error) => {
-    console.log(error.response.data);
-  });
-```
-
-```php
-<?php 
-$data = [
-    'first_name' => 'James',
-    'billing' => [
-        'first_name' => 'James'
-    ],
-    'shipping' => [
-        'first_name' => 'James'
-    ]
-];
-
-print_r($woocommerce->put('customers/25', $data));
-?>
-```
-
-```python
-data = {
-    "first_name": "James",
-    "billing": {
-        "first_name": "James"
-    },
-    "shipping": {
-        "first_name": "James"
-    }
-}
-
-print(wcapi.put("customers/25", data).json())
-```
-
-```ruby
-data = {
-  first_name: "James",
-  billing: {
-    first_name: "James"
-  },
-  shipping: {
-    first_name: "James"
-  }
-}
-
-woocommerce.put("customers/25", data).parsed_response
-```
-
-> JSON response example:
-
-```json
-{
-  "id": 25,
-  "date_created": "2017-03-21T16:09:28",
-  "date_created_gmt": "2017-03-21T19:09:28",
-  "date_modified": "2017-03-21T16:12:28",
-  "date_modified_gmt": "2017-03-21T19:12:28",
-  "email": "john.doe@example.com",
-  "first_name": "James",
-  "last_name": "Doe",
-  "role": "customer",
-  "username": "john.doe",
-  "billing": {
-    "first_name": "James",
-    "last_name": "Doe",
-    "company": "",
-    "address_1": "969 Market",
-    "address_2": "",
-    "city": "San Francisco",
-    "state": "CA",
-    "postcode": "94103",
-    "country": "US",
-    "email": "john.doe@example.com",
-    "phone": "(555) 555-5555"
-  },
-  "shipping": {
-    "first_name": "James",
-    "last_name": "Doe",
-    "company": "",
-    "address_1": "969 Market",
-    "address_2": "",
-    "city": "San Francisco",
-    "state": "CA",
-    "postcode": "94103",
-    "country": "US"
-  },
-  "is_paying_customer": false,
-  "avatar_url": "https://secure.gravatar.com/avatar/8eb1b522f60d11fa897de1dc6351b7e8?s=96",
-  "meta_data": [],
-  "_links": {
-    "self": [
-      {
-        "href": "https://example.com/wp-json/wc/v3/customers/25"
-      }
-    ],
-    "collection": [
-      {
-        "href": "https://example.com/wp-json/wc/v3/customers"
-      }
-    ]
-  }
-}
-```
-
-## Delete a customer ##
-
-This API helps you delete a customer.
-
-### HTTP request ###
-
-<div class="api-endpoint">
-	<div class="endpoint-data">
-		<i class="label label-delete">DELETE</i>
-		<h6>/wp-json/wc/v3/customers/&lt;id&gt;</h6>
-	</div>
-</div>
-
-```shell
-curl -X DELETE https://example.com/wp-json/wc/v3/customers/25?force=true \
-	-u consumer_key:consumer_secret
-```
-
-```javascript
-WooCommerce.delete("customers/25", {
-  force: true
-})
-  .then((response) => {
-    console.log(response.data);
-  })
-  .catch((error) => {
-    console.log(error.response.data);
-  });
-```
-
-```php
-<?php print_r($woocommerce->delete('customers/25', ['force' => true])); ?>
-```
-
-```python
-print(wcapi.delete("customers/25", params={"force": True}).json())
-```
-
-```ruby
-woocommerce.delete("customers/25", force: true).parsed_response
-```
-
-> JSON response example:
-
-```json
-{
-  "id": 25,
-  "date_created": "2017-03-21T16:09:28",
-  "date_created_gmt": "2017-03-21T19:09:28",
-  "date_modified": "2017-03-21T16:12:28",
-  "date_modified_gmt": "2017-03-21T19:12:28",
-  "email": "john.doe@example.com",
-  "first_name": "James",
-  "last_name": "Doe",
-  "role": "customer",
-  "username": "john.doe",
-  "billing": {
-    "first_name": "James",
-    "last_name": "Doe",
-    "company": "",
-    "address_1": "969 Market",
-    "address_2": "",
-    "city": "San Francisco",
-    "state": "CA",
-    "postcode": "94103",
-    "country": "US",
-    "email": "john.doe@example.com",
-    "phone": "(555) 555-5555"
-  },
-  "shipping": {
-    "first_name": "James",
-    "last_name": "Doe",
-    "company": "",
-    "address_1": "969 Market",
-    "address_2": "",
-    "city": "San Francisco",
-    "state": "CA",
-    "postcode": "94103",
-    "country": "US"
-  },
-  "is_paying_customer": false,
-  "avatar_url": "https://secure.gravatar.com/avatar/8eb1b522f60d11fa897de1dc6351b7e8?s=96",
-  "meta_data": [],
-  "_links": {
-    "self": [
-      {
-        "href": "https://example.com/wp-json/wc/v3/customers/25"
-      }
-    ],
-    "collection": [
-      {
-        "href": "https://example.com/wp-json/wc/v3/customers"
-      }
-    ]
-  }
-}
-```
-
-#### Available parameters ####
-
-| Parameter  |   Type  |                          Description                          |
-|------------|---------|---------------------------------------------------------------|
-| `force`    | string  | Required to be `true`, as resource does not support trashing. |
-| `reassign` | integer | User ID to reassign posts to.                                 |
-
-## Batch update customers ##
-
-This API helps you to batch create, update and delete multiple customers.
+This API helps you to batch create multiple outpayments.
 
 <aside class="notice">
-Note: By default it's limited to up to 100 objects to be created, updated or deleted. 
+Note: By default it's limited to up to 100 objects to be created. 
 </aside>
 
 ### HTTP request ###
@@ -841,87 +324,30 @@ Note: By default it's limited to up to 100 objects to be created, updated or del
 <div class="api-endpoint">
 	<div class="endpoint-data">
 		<i class="label label-post">POST</i>
-		<h6>/wp-json/wc/v3/customers/batch</h6>
+		<h6>/outpayments/batch</h6>
 	</div>
 </div>
 
 ```shell
-curl -X POST https://example.com/wp-json/wc/v3/customers/batch \
-	-u consumer_key:consumer_secret \
-	-H "Content-Type: application/json" \
+curl -X POST https://api.payhere.africa/v1//outpayments/batch \
+	-u username:your_username \
+  -u password:your_password \
+  -H "APP-ID: your_app_id" \
+  -H "Content-Type: application/json"
 	-d '{
   "create": [
     {
-      "email": "john.doe2@example.com",
-      "first_name": "John",
-      "last_name": "Doe",
-      "username": "john.doe2",
-      "billing": {
-        "first_name": "John",
-        "last_name": "Doe",
-        "company": "",
-        "address_1": "969 Market",
-        "address_2": "",
-        "city": "San Francisco",
-        "state": "CA",
-        "postcode": "94103",
-        "country": "US",
-        "email": "john.doe@example.com",
-        "phone": "(555) 555-5555"
-      },
-      "shipping": {
-        "first_name": "John",
-        "last_name": "Doe",
-        "company": "",
-        "address_1": "969 Market",
-        "address_2": "",
-        "city": "San Francisco",
-        "state": "CA",
-        "postcode": "94103",
-        "country": "US"
-      }
+      "processingNumber": "800-jan-salary",
+      "msisdn": 256772123456,
+      "amount": 500000,
+      "narration": "Junuary salary"
     },
     {
-      "email": "joao.silva2@example.com",
-      "first_name": "João",
-      "last_name": "Silva",
-      "username": "joao.silva2",
-      "billing": {
-        "first_name": "João",
-        "last_name": "Silva",
-        "company": "",
-        "address_1": "Av. Brasil, 432",
-        "address_2": "",
-        "city": "Rio de Janeiro",
-        "state": "RJ",
-        "postcode": "12345-000",
-        "country": "BR",
-        "email": "joao.silva@example.com",
-        "phone": "(55) 5555-5555"
-      },
-      "shipping": {
-        "first_name": "João",
-        "last_name": "Silva",
-        "company": "",
-        "address_1": "Av. Brasil, 432",
-        "address_2": "",
-        "city": "Rio de Janeiro",
-        "state": "RJ",
-        "postcode": "12345-000",
-        "country": "BR"
-      }
+      "processingNumber": "400-invoice-123",
+      "msisdn": 256772123456,
+      "amount": 30000,
+      "narration": "Fuel for overtime"
     }
-  ],
-  "update": [
-    {
-      "id": 26,
-      "billing": {
-        "phone": "(11) 1111-1111"
-      }
-    }
-  ],
-  "delete": [
-    25
   ]
 }'
 ```
@@ -930,80 +356,21 @@ curl -X POST https://example.com/wp-json/wc/v3/customers/batch \
 const data = {
   create: [
     {
-      email: "john.doe2@example.com",
-      first_name: "John",
-      last_name: "Doe",
-      username: "john.doe2",
-      billing: {
-        first_name: "John",
-        last_name: "Doe",
-        company: "",
-        address_1: "969 Market",
-        address_2: "",
-        city: "San Francisco",
-        state: "CA",
-        postcode: "94103",
-        country: "US",
-        email: "john.doe@example.com",
-        phone: "(555) 555-5555"
-      },
-      shipping: {
-        first_name: "John",
-        last_name: "Doe",
-        company: "",
-        address_1: "969 Market",
-        address_2: "",
-        city: "San Francisco",
-        state: "CA",
-        postcode: "94103",
-        country: "US"
-      }
+      processingNumber: "800-jan-salary",
+      msisdn: 256772123456,
+      amount: 500000,
+      narration: "Junuary salary"
     },
     {
-      email: "joao.silva2@example.com",
-      first_name: "João",
-      last_name: "Silva",
-      username: "joao.silva2",
-      billing: {
-        first_name: "João",
-        last_name: "Silva",
-        company: "",
-        address_1: "Av. Brasil, 432",
-        address_2: "",
-        city: "Rio de Janeiro",
-        state: "RJ",
-        postcode: "12345-000",
-        country: "BR",
-        email: "joao.silva@example.com",
-        phone: "(55) 5555-5555"
-      },
-      shipping: {
-        first_name: "João",
-        last_name: "Silva",
-        company: "",
-        address_1: "Av. Brasil, 432",
-        address_2: "",
-        city: "Rio de Janeiro",
-        state: "RJ",
-        postcode: "12345-000",
-        country: "BR"
-      }
+      processingNumber: "400-invoice-123",
+      msisdn: 256772123456,
+      amount: 30000,
+      narration: "Fuel for overtime"
     }
-  ],
-  update: [
-    {
-      id: 26,
-      billing: {
-        phone: "(11) 1111-1111"
-      }
-    }
-  ],
-  delete: [
-    11
   ]
 };
 
-WooCommerce.post("customers/batch", data)
+Payhere.post("outpayments/batch", data)
   .then((response) => {
     console.log(response.data);
   })
@@ -1013,84 +380,25 @@ WooCommerce.post("customers/batch", data)
 ```
 
 ```php
-<?php 
+<?php
 $data = [
     'create' => [
         [
-            'email' => 'john.doe2@example.com',
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'username' => 'john.doe2',
-            'billing' => [
-                'first_name' => 'John',
-                'last_name' => 'Doe',
-                'company' => '',
-                'address_1' => '969 Market',
-                'address_2' => '',
-                'city' => 'San Francisco',
-                'state' => 'CA',
-                'postcode' => '94103',
-                'country' => 'US',
-                'email' => 'john.doe@example.com',
-                'phone' => '(555) 555-5555'
-            ],
-            'shipping' => [
-                'first_name' => 'John',
-                'last_name' => 'Doe',
-                'company' => '',
-                'address_1' => '969 Market',
-                'address_2' => '',
-                'city' => 'San Francisco',
-                'state' => 'CA',
-                'postcode' => '94103',
-                'country' => 'US'
-            ]
+            'processingNumber' => '800-jan-salary',
+            'msisdn' => 256772123456,
+            'amount' => 500000,
+            'narration' => 'Junuary salary'
         ],
         [
-            'email' => 'joao.silva2@example.com',
-            'first_name' => 'João',
-            'last_name' => 'Silva',
-            'username' => 'joao.silva2',
-            'billing' => [
-                'first_name' => 'João',
-                'last_name' => 'Silva',
-                'company' => '',
-                'address_1' => 'Av. Brasil, 432',
-                'address_2' => '',
-                'city' => 'Rio de Janeiro',
-                'state' => 'RJ',
-                'postcode' => '12345-000',
-                'country' => 'BR',
-                'email' => 'joao.silva@example.com',
-                'phone' => '(55) 5555-5555'
-            ],
-            'shipping' => [
-                'first_name' => 'João',
-                'last_name' => 'Silva',
-                'company' => '',
-                'address_1' => 'Av. Brasil, 432',
-                'address_2' => '',
-                'city' => 'Rio de Janeiro',
-                'state' => 'RJ',
-                'postcode' => '12345-000',
-                'country' => 'BR'
-            ]
+            'processingNumber' => '400-invoice-123',
+            'msisdn' => 256772123456,
+            'amount' => 30000,
+            'narration' => 'Fuel for overtime'
         ]
-    ],
-    'update' => [
-        [
-            'id' => 26,
-            'billing' => [
-                'phone' => '(11) 1111-1111'
-            ]
-        ]
-    ],
-    'delete' => [
-        25
     ]
 ];
 
-print_r($woocommerce->post('customers/batch', $data));
+print_r($payhere->post('outpayments/batch', $data));
 ?>
 ```
 
@@ -1098,160 +406,42 @@ print_r($woocommerce->post('customers/batch', $data));
 data = {
     "create": [
         {
-            "email": "john.doe2@example.com",
-            "first_name": "John",
-            "last_name": "Doe",
-            "username": "john.doe2",
-            "billing": {
-                "first_name": "John",
-                "last_name": "Doe",
-                "company": "",
-                "address_1": "969 Market",
-                "address_2": "",
-                "city": "San Francisco",
-                "state": "CA",
-                "postcode": "94103",
-                "country": "US",
-                "email": "john.doe@example.com",
-                "phone": "(555) 555-5555"
-            },
-            "shipping": {
-                "first_name": "John",
-                "last_name": "Doe",
-                "company": "",
-                "address_1": "969 Market",
-                "address_2": "",
-                "city": "San Francisco",
-                "state": "CA",
-                "postcode": "94103",
-                "country": "US"
-            }
+            "processingNumber": "800-jan-salary",
+            "msisdn": 256772123456,
+            "amount": 500000,
+            "narration": "Junuary salary"
         },
         {
-            "email": "joao.silva2@example.com",
-            "first_name": "João",
-            "last_name": "Silva",
-            "username": "joao.silva2",
-            "billing": {
-                "first_name": "João",
-                "last_name": "Silva",
-                "company": "",
-                "address_1": "Av. Brasil, 432",
-                "address_2": "",
-                "city": "Rio de Janeiro",
-                "state": "RJ",
-                "postcode": "12345-000",
-                "country": "BR",
-                "email": "joao.silva@example.com",
-                "phone": "(55) 5555-5555"
-            },
-            "shipping": {
-                "first_name": "João",
-                "last_name": "Silva",
-                "company": "",
-                "address_1": "Av. Brasil, 432",
-                "address_2": "",
-                "city": "Rio de Janeiro",
-                "state": "RJ",
-                "postcode": "12345-000",
-                "country": "BR"
-            }
+            "processingNumber": "400-invoice-123",
+            "msisdn": 256772123456,
+            "amount": 30000,
+            "narration": "Fuel for overtime"
         }
-    ],
-    "update": [
-        {
-            "id": 26,
-            "billing": {
-                "phone": "(11) 1111-1111"
-            }
-        }
-    ],
-    "delete": [
-        25
     ]
 }
 
-print(wcapi.post("customers/batch", data).json())
+print(wcapi.post("outpayments/batch", data).json())
 ```
 
 ```ruby
 data = {
   create: [
     {
-      email: "john.doe2@example.com",
-      first_name: "John",
-      last_name: "Doe",
-      username: "john.doe2",
-      billing: {
-        first_name: "John",
-        last_name: "Doe",
-        company: "",
-        address_1: "969 Market",
-        address_2: "",
-        city: "San Francisco",
-        state: "CA",
-        postcode: "94103",
-        country: "US",
-        email: "john.doe@example.com",
-        phone: "(555) 555-5555"
-      },
-      shipping: {
-        first_name: "John",
-        last_name: "Doe",
-        company: "",
-        address_1: "969 Market",
-        address_2: "",
-        city: "San Francisco",
-        state: "CA",
-        postcode: "94103",
-        country: "US"
-      }
+      processingNumber: "800-jan-salary",
+      msisdn: 256772123456,
+      amount: 500000,
+      narration: "Junuary salary"
     },
     {
-      email: "joao.silva2@example.com",
-      first_name: "João",
-      last_name: "Silva",
-      username: "joao.silva2",
-      billing: {
-        first_name: "João",
-        last_name: "Silva",
-        company: "",
-        address_1: "Av. Brasil, 432",
-        address_2: "",
-        city: "Rio de Janeiro",
-        state: "RJ",
-        postcode: "12345-000",
-        country: "BR",
-        email: "joao.silva@example.com",
-        phone: "(55) 5555-5555"
-      },
-      shipping: {
-        first_name: "João",
-        last_name: "Silva",
-        company: "",
-        address_1: "Av. Brasil, 432",
-        address_2: "",
-        city: "Rio de Janeiro",
-        state: "RJ",
-        postcode: "12345-000",
-        country: "BR"
-      }
+      processingNumber: "400-invoice-123",
+      msisdn: 256772123456,
+      amount: 120,
+      narration: "Fuel for overtime"
     }
-  ],
-  update: [
-    {
-      id: 26,
-      billing: {
-        phone: "(11) 1111-1111"
-      }
-    }
-  ],
-  delete: [
-    25
   ]
 }
 
-woocommerce.post("customers/batch", data).parsed_response
+payhere.post("outpayments/batch", data).parsed_response
 ```
 
 > JSON response example:
@@ -1260,209 +450,33 @@ woocommerce.post("customers/batch", data).parsed_response
 {
   "create": [
     {
-      "id": 27,
-      "date_created": "2017-03-21T16:13:58",
-      "date_created_gmt": "2017-03-21T19:13:58",
-      "date_modified": "2017-03-21T16:13:59",
-      "date_modified_gmt": "2017-03-21T19:13:59",
-      "email": "john.doe2@example.com",
-      "first_name": "John",
-      "last_name": "Doe",
-      "role": "customer",
-      "username": "john.doe2",
-      "billing": {
-        "first_name": "John",
-        "last_name": "Doe",
-        "company": "",
-        "address_1": "969 Market",
-        "address_2": "",
-        "city": "San Francisco",
-        "state": "CA",
-        "postcode": "94103",
-        "country": "US",
-        "email": "john.doe@example.com",
-        "phone": "(555) 555-5555"
-      },
-      "shipping": {
-        "first_name": "John",
-        "last_name": "Doe",
-        "company": "",
-        "address_1": "969 Market",
-        "address_2": "",
-        "city": "San Francisco",
-        "state": "CA",
-        "postcode": "94103",
-        "country": "US"
-      },
-      "is_paying_customer": false,
-      "avatar_url": "https://secure.gravatar.com/avatar/6ad0b094bac53a85bb282ccdb3958279?s=96",
-      "meta_data": [],
+      "processingNumber": "800-jan-salary",
+      "transactionStatus": "pending",
       "_links": {
         "self": [
           {
-            "href": "https://example.com/wp-json/wc/v3/customers/27"
+            "href": "https://api.payhere.africa/v1/outpayments/800-jan-salary"
           }
         ],
         "collection": [
           {
-            "href": "https://example.com/wp-json/wc/v3/customers"
+            "href": "https://api.payhere.africa/v1/outpayments"
           }
         ]
       }
     },
     {
-      "id": 28,
-      "date_created": "2017-03-21T16:14:00",
-      "date_created_gmt": "2017-03-21T19:14:00",
-      "date_modified": "2017-03-21T16:14:01",
-      "date_modified_gmt": "2017-03-21T19:14:01",
-      "email": "joao.silva2@example.com",
-      "first_name": "João",
-      "last_name": "Silva",
-      "role": "customer",
-      "username": "joao.silva2",
-      "billing": {
-        "first_name": "João",
-        "last_name": "Silva",
-        "company": "",
-        "address_1": "Av. Brasil, 432",
-        "address_2": "",
-        "city": "Rio de Janeiro",
-        "state": "RJ",
-        "postcode": "12345-000",
-        "country": "BR",
-        "email": "joao.silva@example.com",
-        "phone": "(55) 5555-5555"
-      },
-      "shipping": {
-        "first_name": "João",
-        "last_name": "Silva",
-        "company": "",
-        "address_1": "Av. Brasil, 432",
-        "address_2": "",
-        "city": "Rio de Janeiro",
-        "state": "RJ",
-        "postcode": "12345-000",
-        "country": "BR"
-      },
-      "is_paying_customer": false,
-      "avatar_url": "https://secure.gravatar.com/avatar/ea9ad095f2970f27cbff07e7f5e99453?s=96",
-      "meta_data": [],
+      "processingNumber": "400-invoice-123",
+      "transactionStatus": "pending",
       "_links": {
         "self": [
           {
-            "href": "https://example.com/wp-json/wc/v3/customers/28"
+            "href": "https://api.payhere.africa/v1/outpayments/400-invoice-123"
           }
         ],
         "collection": [
           {
-            "href": "https://example.com/wp-json/wc/v3/customers"
-          }
-        ]
-      }
-    }
-  ],
-  "update": [
-    {
-      "id": 26,
-      "date_created": "2017-03-21T16:11:14",
-      "date_created_gmt": "2017-03-21T19:11:14",
-      "date_modified": "2017-03-21T16:14:03",
-      "date_modified_gmt": "2017-03-21T19:14:03",
-      "email": "joao.silva@example.com",
-      "first_name": "João",
-      "last_name": "Silva",
-      "role": "customer",
-      "username": "joao.silva",
-      "billing": {
-        "first_name": "João",
-        "last_name": "Silva",
-        "company": "",
-        "address_1": "Av. Brasil, 432",
-        "address_2": "",
-        "city": "Rio de Janeiro",
-        "state": "RJ",
-        "postcode": "12345-000",
-        "country": "BR",
-        "email": "joao.silva@example.com",
-        "phone": "(11) 1111-1111"
-      },
-      "shipping": {
-        "first_name": "João",
-        "last_name": "Silva",
-        "company": "",
-        "address_1": "Av. Brasil, 432",
-        "address_2": "",
-        "city": "Rio de Janeiro",
-        "state": "RJ",
-        "postcode": "12345-000",
-        "country": "BR"
-      },
-      "is_paying_customer": false,
-      "avatar_url": "https://secure.gravatar.com/avatar/be7b5febff88a2d947c3289e90cdf017?s=96",
-      "meta_data": [],
-      "_links": {
-        "self": [
-          {
-            "href": "https://example.com/wp-json/wc/v3/customers/26"
-          }
-        ],
-        "collection": [
-          {
-            "href": "https://example.com/wp-json/wc/v3/customers"
-          }
-        ]
-      }
-    }
-  ],
-  "delete": [
-    {
-      "id": 25,
-      "date_created": "2017-03-21T16:09:28",
-      "date_created_gmt": "2017-03-21T19:09:28",
-      "date_modified": "2017-03-21T16:12:28",
-      "date_modified_gmt": "2017-03-21T19:12:28",
-      "email": "john.doe@example.com",
-      "first_name": "James",
-      "last_name": "Doe",
-      "role": "customer",
-      "username": "john.doe",
-      "billing": {
-        "first_name": "James",
-        "last_name": "Doe",
-        "company": "",
-        "address_1": "969 Market",
-        "address_2": "",
-        "city": "San Francisco",
-        "state": "CA",
-        "postcode": "94103",
-        "country": "US",
-        "email": "john.doe@example.com",
-        "phone": "(555) 555-5555"
-      },
-      "shipping": {
-        "first_name": "James",
-        "last_name": "Doe",
-        "company": "",
-        "address_1": "969 Market",
-        "address_2": "",
-        "city": "San Francisco",
-        "state": "CA",
-        "postcode": "94103",
-        "country": "US"
-      },
-      "is_paying_customer": false,
-      "avatar_url": "https://secure.gravatar.com/avatar/8eb1b522f60d11fa897de1dc6351b7e8?s=96",
-      "meta_data": [],
-      "_links": {
-        "self": [
-          {
-            "href": "https://example.com/wp-json/wc/v3/customers/25"
-          }
-        ],
-        "collection": [
-          {
-            "href": "https://example.com/wp-json/wc/v3/customers"
+            "href": "https://api.payhere.africa/v1/outpayments"
           }
         ]
       }
@@ -1470,106 +484,3 @@ woocommerce.post("customers/batch", data).parsed_response
   ]
 }
 ```
-
-## Retrieve customer downloads ##
-
-This API lets you retrieve customer downloads permissions.
-
-### HTTP request ###
-
-<div class="api-endpoint">
-	<div class="endpoint-data">
-		<i class="label label-get">GET</i>
-		<h6>/wp-json/wc/v3/customers/&lt;id&gt;/downloads</h6>
-	</div>
-</div>
-
-```shell
-curl https://example.com/wp-json/wc/v3/customers/26/downloads \
-	-u consumer_key:consumer_secret
-```
-
-```javascript
-WooCommerce.get("customers/26/downloads")
-  .then((response) => {
-    console.log(response.data);
-  })
-  .catch((error) => {
-    console.log(error.response.data);
-  });
-```
-
-```php
-<?php print_r($woocommerce->get('customers/26/downloads')); ?>
-```
-
-```python
-print(wcapi.get("customers/26/downloads").json())
-```
-
-```ruby
-woocommerce.get("customers/26/downloads").parsed_response
-```
-
-> JSON response example:
-
-```json
-[
-  {
-    "download_id": "91447fd1849316bbc89dfb7e986a6006",
-    "download_url": "https://example.com/?download_file=87&order=wc_order_58d17c18352&email=joao.silva%40example.com&key=91447fd1849316bbc89dfb7e986a6006",
-    "product_id": 87,
-    "product_name": "Woo Album #2",
-    "download_name": "Woo Album #2 &ndash; Song 2",
-    "order_id": 723,
-    "order_key": "wc_order_58d17c18352",
-    "downloads_remaining": "3",
-    "access_expires": "never",
-    "access_expires_gmt": "never",
-    "file": {
-      "name": "Song 2",
-      "file": "http://example.com/wp-content/uploads/woocommerce_uploads/2013/06/Song.mp3"
-    },
-    "_links": {
-      "collection": [
-        {
-          "href": "https://example.com/wp-json/wc/v3/customers/26/downloads"
-        }
-      ],
-      "product": [
-        {
-          "href": "https://example.com/wp-json/wc/v3/products/87"
-        }
-      ],
-      "order": [
-        {
-          "href": "https://example.com/wp-json/wc/v3/orders/723"
-        }
-      ]
-    }
-  }
-]
-```
-
-### Customer downloads properties ###
-
-| Attribute             | Type    | Description                                                                                                                               |
-| --------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `download_id`         | string  | Download ID (MD5). <i class="label label-info">read-only</i>                                                                              |
-| `download_url`        | string  | Download file URL. <i class="label label-info">read-only</i>                                                                              |
-| `product_id`          | integer | Downloadable product ID. <i class="label label-info">read-only</i>                                                                        |
-| `product_name`        | string  | Product name. <i class="label label-info">read-only</i>                                                                                   |
-| `download_name`       | string  | Downloadable file name. <i class="label label-info">read-only</i>                                                                         |
-| `order_id`            | integer | Order ID. <i class="label label-info">read-only</i>                                                                                       |
-| `order_key`           | string  | Order key. <i class="label label-info">read-only</i>                                                                                      |
-| `downloads_remaining` | string  | Number of downloads remaining. <i class="label label-info">read-only</i>                                                                  |
-| `access_expires`      | string  | The date when download access expires, in the site's timezone. <i class="label label-info">read-only</i>                                  |
-| `access_expires_gmt`  | string  | The date when download access expires, as GMT. <i class="label label-info">read-only</i>                                                  |
-| `file`                | object  | File details. <i class="label label-info">read-only</i> See [Customers downloads - File properties](#customers-downloads-file-properties) |
-
-#### Customer downloads - File properties ####
-
-| Attribute | Type   | Description                                          |
-| --------- | ------ | ---------------------------------------------------- |
-| `name`    | string | File name. <i class="label label-info">read-only</i> |
-| `file`    | string | File URL. <i class="label label-info">read-only</i>  |

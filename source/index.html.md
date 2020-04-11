@@ -17,12 +17,12 @@ toc_footers:
   - <a href="https://github.com/tripit/slate">Documentation Powered by Slate</a>
 
 includes:
-  - wp-api-v3/introduction
-  - wp-api-v3/authentication
-  - wp-api-v3/inpayments
-  - wp-api-v3/outpayments
-  - wp-api-v3/reports
-  - wp-api-v3/webhooks
+  - api-v1/introduction
+  - api-v1/authentication
+  - api-v1/inpayments
+  - api-v1/outpayments
+  - api-v1/reports
+  - api-v1/webhooks
 
 search: false
 ---
